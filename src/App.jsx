@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import WeatherDisplay from './WeatherDisplay';
 
-const API_KEY = 'YOUR_API_KEY_HERE';
+const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
+
 
 export default function App() {
   const [input, setInput] = useState('');
