@@ -44,3 +44,28 @@ button {
   padding: 0.5rem;
   text-align: center;
 }
+.weather-icon {
+  font-size: 48px;
+  color: #f39c12;
+  margin: 1rem 0;
+}
+
+.forecast-icon {
+  font-size: 36px;
+  color: #3498db;
+}
+
+.forecast-grid {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.forecast-card {
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 8px;
+  width: 130px;
+  text-align: center;
+}
