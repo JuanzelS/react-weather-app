@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import WeatherDisplay from './WeatherDisplay';
+import './App.css';
 
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
-
 
 export default function App() {
   const [input, setInput] = useState('');
@@ -23,9 +23,7 @@ export default function App() {
     }
   }, []);
 
-  const saveToLocalStorage = (query) => {
-    localStorage.setItem('lastSearch', query);
-  };
+  const saveToLocalStorage = (query) => localStorage.setItem('lastSearch', query);
 
   const fetchWeather = async (query) => {
     setLoading(true);
@@ -34,14 +32,11 @@ export default function App() {
     setForecastData([]);
 
     let endpoint;
-    if (/^\d{5}$/.test(query)) {
-      endpoint = `zip=${query},us`;
-    } else if (/^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(query)) {
+    if (/^\d{5}$/.test(query)) endpoint = `zip=${query},us`;
+    else if (/^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(query)) {
       const [lat, lon] = query.split(',');
       endpoint = `lat=${lat}&lon=${lon}`;
-    } else {
-      endpoint = `q=${query}`;
-    }
+    } else endpoint = `q=${query}`;
 
     try {
       const weatherRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?${endpoint}&appid=${API_KEY}&units=imperial`);
@@ -53,7 +48,6 @@ export default function App() {
       const forecastJson = await forecastRes.json();
       if (forecastJson.cod !== '200') throw new Error(forecastJson.message);
 
-      // Filter forecast to once per day (12:00 PM)
       const dailyForecasts = forecastJson.list.filter(item => item.dt_txt.includes('12:00:00'));
       setForecastData(dailyForecasts);
       saveToLocalStorage(query);
@@ -85,35 +79,35 @@ export default function App() {
 
   return (
     <div className="app-container">
-      <h1>🌦️ React Weather App</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Zip, City, or Lat,Lng"
-          required
-        />
-        <button type="submit">Get Weather</button>
-        <button type="button" onClick={addFavorite}>⭐ Save</button>
-      </form>
+      <div className="card">
+        <h1>🌦️ React Weather App</h1>
+        <form onSubmit={handleSubmit} className="weather-form">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Zip, City, or Lat,Lng"
+            required
+          />
+          <button type="submit">Get Weather</button>
+          <button type="button" onClick={addFavorite}>⭐ Save</button>
+        </form>
 
-      {favorites.length > 0 && (
-        <div className="favorites">
-          <h4>⭐ Favorites:</h4>
-          {favorites.map((fav, idx) => (
-            <button key={idx} onClick={() => selectFavorite(fav)}>
-              {fav}
-            </button>
-          ))}
-        </div>
-      )}
+        {favorites.length > 0 && (
+          <div className="favorites">
+            <h4>⭐ Favorites:</h4>
+            {favorites.map((fav, idx) => (
+              <button key={idx} className={activeFav === fav ? "active-fav" : ""} onClick={() => selectFavorite(fav)}>
+                {fav}
+              </button>
+            ))}
+          </div>
+        )}
 
-      {loading && <p>⏳ Loading weather data...</p>}
-      {error && <p className="error">⚠️ {error}</p>}
-      {weatherData && (
-        <WeatherDisplay current={weatherData} forecast={forecastData} />
-      )}
+        {loading && <p className="info">⏳ Loading weather data...</p>}
+        {error && <p className="error">⚠️ {error}</p>}
+        {weatherData && <WeatherDisplay current={weatherData} forecast={forecastData} />}
+      </div>
     </div>
   );
 }

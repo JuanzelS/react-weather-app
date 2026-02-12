@@ -1,6 +1,5 @@
 import React from 'react';
 
-// Mapping OpenWeatherMap icons to Weather Icons classes
 const iconMap = {
   '01d': 'wi-day-sunny',
   '01n': 'wi-night-clear',
